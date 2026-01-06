@@ -1,22 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
-
   // ===== DOM =====
   const authBtn = document.querySelector('.button-auth');
-  const authBtnText = authBtn?.querySelector('.button-text');
-  const userLoginText = authBtn?.querySelector('.user-login');
+  const cartBtn = document.getElementById('cart-button');
 
   const modalAuth = document.querySelector('.modal-auth');
-  const modalDialog = document.querySelector('.modal-dialog');
   const closeAuth = document.querySelector('.close-auth');
   const loginForm = document.getElementById('logInForm');
 
   const loginInput = document.getElementById('login');
   const passwordInput = document.getElementById('password');
 
-  // ===== helpers =====
   const openAuthModal = () => {
     modalAuth.style.display = 'flex';
-    clearErrors();
     document.body.style.overflow = 'hidden'; // прибираємо скрол
   };
 
@@ -31,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const clearError = (input) => {
-    input.style.border = '1px solid #000';
+    input.style.border = '';
   };
 
   const clearErrors = () => {
@@ -39,42 +34,35 @@ document.addEventListener('DOMContentLoaded', () => {
     clearError(passwordInput);
   };
 
-  const setLoggedState = (login) => {
-    authBtnText.textContent = 'Вийти';
-    userLoginText.textContent = login;
-  };
-
-  const setLoggedOutState = () => {
-    authBtnText.textContent = 'Увійти';
-    userLoginText.textContent = '';
-  };
-
-  // ===== init (localStorage) =====
+  // ===== init =====
   const savedLogin = localStorage.getItem('login');
-
   if (savedLogin && authBtn) {
-    setLoggedState(savedLogin);
+    authBtn.querySelector('.button-text').textContent = savedLogin;
   }
 
   // ===== events =====
 
   // кнопка Увійти / Вийти
-  authBtn?.addEventListener('click', () => {
-    const isLogged = localStorage.getItem('login');
+  if (authBtn) {
+    authBtn.addEventListener('click', () => {
+      const isLogged = localStorage.getItem('login');
 
-    if (!isLogged) {
-      openAuthModal();
-    } else {
-      localStorage.removeItem('login');
-      setLoggedOutState();
-    }
-  });
+      if (!isLogged) {
+        openAuthModal();
+      } else {
+        localStorage.removeItem('login');
+        authBtn.querySelector('.button-text').textContent = 'Війти';
+      }
+    });
+  }
 
   // хрестик
-  closeAuth?.addEventListener('click', closeAuthModal);
+  if (closeAuth) {
+    closeAuth.addEventListener('click', closeAuthModal);
+  }
 
-  // клік поза модалкою
-  modalAuth?.addEventListener('click', (e) => {
+  // 🔥 КЛІК ПОЗА МОДАЛКОЮ (ДОДАНО)
+  modalAuth.addEventListener('click', (e) => {
     if (e.target === modalAuth) {
       closeAuthModal();
     }
@@ -86,33 +74,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // submit форми
   loginForm.addEventListener('submit', (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const login = loginInput.value.trim();
-  const password = passwordInput.value.trim();
+    const login = loginInput.value.trim();
+    const password = passwordInput.value.trim();
 
-  let hasError = false;
+    let hasError = false;
 
-  if (!login) {
-    setError(loginInput);
-    hasError = true;
-  }
+    if (!login) {
+      setError(loginInput);
+      hasError = true;
+    }
 
-  if (!password) {
-    setError(passwordInput);
-    hasError = true;
-  }
+    if (!password) {
+      setError(passwordInput);
+      hasError = true;
+    }
 
-  closeAuthModal();
+    if (hasError) return;
 
-  if (hasError) return;
+    localStorage.setItem('login', login);
 
-  localStorage.setItem('login', login);
-  setLoggedState(login);
+    if (authBtn) {
+      authBtn.querySelector('.button-text').textContent = login;
+    }
 
-  loginInput.value = '';
-  passwordInput.value = '';
-});
-
+    loginInput.value = '';
+    passwordInput.value = '';
+    closeAuthModal();
+  });
 
 });
