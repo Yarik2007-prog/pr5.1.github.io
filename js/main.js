@@ -60,8 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (closeAuth) {
     closeAuth.addEventListener('click', closeAuthModal);
   }
-
-  // 🔥 КЛІК ПОЗА МОДАЛКОЮ (ДОДАНО)
+  
   modalAuth.addEventListener('click', (e) => {
     if (e.target === modalAuth) {
       closeAuthModal();
@@ -105,3 +104,4 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
+
